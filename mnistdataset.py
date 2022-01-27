@@ -1,24 +1,62 @@
 import os
+import re
+import struct
+
+import imageio
+import numpy as np
+
+datasetPath = "/pytorchtutorial/data/"
+
 
 def loadDataset():
-    datasetPath = "/pytorchtutorial/data/"
     datasetDict = {
         "train": {
-            "images": loadImages(f"{datasetPath}/train-images-idx3-ubyte"),
-            "labels": loadLabels(f"{datasetPath}/train-labels-idx1-ubyte"),
+            "images": loadIdx(f"{datasetPath}/train-images-idx3-ubyte"),
+            "labels": loadIdx(f"{datasetPath}/train-labels-idx1-ubyte"),
         },
         "test": {
-            "images": loadImages(f"{datasetPath}/t10k-images-idx3-ubyte"),
-            "labels": loadLabels(f"{datasetPath}/t10k-labels-idx1-ubyte"),
+            "images": loadIdx(f"{datasetPath}/t10k-images-idx3-ubyte"),
+            "labels": loadIdx(f"{datasetPath}/t10k-labels-idx1-ubyte"),
         },
     }
     return datasetDict
 
 
-def loadImages(imagesFilePath):
-    raise NotImplementedError()
+def loadIdx(idxFilePath):
+    fileName = os.path.basename(idxFilePath)
+    expression = ".*idx(\d)"
+    matches = re.match(expression, fileName)
+    if not matches:
+        raise ValueError(f"File name did not match idx file convention: {fileName}")
+    numChannels = int(matches.group(1))
+
+    with open(idxFilePath, "rb") as f:
+        buffer = f.read()
+    data = parseData(buffer, numChannels)
+    return data
 
 
-def loadLabels(labelsFilePath):
-    raise NotImplementedError()
+def parseData(buffer, numChannels):
+    headerBitSize = 32
+    bitsPerByte = 8
+    headerDataSize = headerBitSize//bitsPerByte
+    headerEnd = (numChannels+1)*headerDataSize
+    header = buffer[:headerEnd]
+    numberFormat = f">{'i'*(numChannels+1)}"
+    parsedHeader = struct.unpack(numberFormat, header)
+    desiredShape = (parsedHeader[1],)
+    if numChannels > 1:
+        desiredShape = parsedHeader[1:]
+    data = np.frombuffer(buffer[headerEnd:], dtype=np.uint8)
+    dataReshaped = data.reshape(desiredShape)
+    return dataReshaped
+
+
+def main():
+    trainImages = loadIdx(f"{datasetPath}/train-images-idx3-ubyte")
+    trainLabels = loadIdx(f"{datasetPath}/train-labels-idx1-ubyte")
+
+
+if __name__ == "__main__":
+    main()
 
