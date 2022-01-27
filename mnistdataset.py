@@ -59,6 +59,9 @@ def parseData(buffer, numChannels):
 def main():
     trainImages = loadIdx(f"{datasetPath}/train-images-idx3-ubyte")
     trainLabels = loadIdx(f"{datasetPath}/train-labels-idx1-ubyte")
+    for i, trainImage in enumerate(trainImages[:10]):
+        outputPath = f"/tmp/output/image{i:02d}.png"
+        imageio.imwrite(outputPath, trainImage)
 
 
 if __name__ == "__main__":

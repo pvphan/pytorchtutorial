@@ -15,6 +15,7 @@ RUN_FLAGS = \
 	--ipc=host \
 	--user="$(id -u):$(id -g)" \
 	--volume=${REPO_PATH}:${WORKDIR_PATH}:ro \
+	--volume=/tmp/pytorchtutorial/output:/tmp/output \
 	${IMAGE_TAG}
 
 shell: image downloaddata
