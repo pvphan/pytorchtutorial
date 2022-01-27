@@ -1,6 +1,8 @@
 import numpy as np
 import torch
 
+import mnistdataset
+
 
 class MnistModel(torch.nn.Module):
     def __init__(self):
@@ -36,28 +38,6 @@ def initializeDevice(model):
     return device
 
 
-def loadDataset():
-    datasetPath = "/pytorchtutorial/data/"
-    dataset = {
-        "train": {
-            "images": loadImages(f"{datasetPath}/train-images-idx3-ubyte"),
-            "labels": loadLabels(f"{datasetPath}/train-labels-idx1-ubyte"),
-        },
-        "test": {
-            "images": loadImages(f"{datasetPath}/t10k-images-idx3-ubyte"),
-            "labels": loadLabels(f"{datasetPath}/t10k-labels-idx1-ubyte"),
-        },
-    }
-
-
-def loadImages(imagesFilePath):
-    raise NotImplementedError()
-
-
-def loadLabels(labelsFilePath):
-    raise NotImplementedError()
-
-
 def main():
     model = MnistModel()
     device = initializeDevice(model)
@@ -67,9 +47,9 @@ def main():
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=learningRate)
 
-    dataset = loadDataset()
-    x = dataset["train"]["images"]
-    y = dataset["train"]["labels"]
+    datasetDict = mnistdataset.loadDataset()
+    x = datasetDict["train"]["images"]
+    y = datasetDict["train"]["labels"]
     inputs = torch.tensor(x, device=device, dtype=torch.float32).view(-1,1)
     labels = torch.tensor(y, device=device, dtype=torch.float32).view(-1,1)
 
