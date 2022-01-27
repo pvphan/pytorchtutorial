@@ -13,12 +13,15 @@ RUN_FLAGS = \
 	--volume=${REPO_PATH}:${WORKDIR_PATH}:ro \
 	${IMAGE_TAG}
 
-shell: image
+shell: image downloaddata
 	docker run \
 		${RUN_FLAGS} bash
 
 image:
 	docker build --tag ${IMAGE_TAG} .
 
-uploadImage: image
+downloaddata:
+	./downloadmnist.sh
+
+uploadimage: image
 	docker push ${IMAGE_TAG}
