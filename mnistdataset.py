@@ -40,15 +40,19 @@ def parseData(buffer, numChannels):
     headerBitSize = 32
     bitsPerByte = 8
     headerDataSize = headerBitSize//bitsPerByte
+    magicNumberBase = 2048
+
     headerEnd = (numChannels+1)*headerDataSize
     header = buffer[:headerEnd]
     numberFormat = f">{'i'*(numChannels+1)}"
     parsedHeader = struct.unpack(numberFormat, header)
-    desiredShape = (parsedHeader[1],)
-    if numChannels > 1:
-        desiredShape = parsedHeader[1:]
+    magicNumber = parsedHeader[0]
+    if magicNumber != magicNumberBase + numChannels:
+        raise ValueError(f"Unexpected magic number: {magicNumber}")
+
+    dataShape = parsedHeader[1:]
     data = np.frombuffer(buffer[headerEnd:], dtype=np.uint8)
-    dataReshaped = data.reshape(desiredShape)
+    dataReshaped = data.reshape(dataShape)
     return dataReshaped
 
 
