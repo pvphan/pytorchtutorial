@@ -23,3 +23,4 @@ Prerequisites on your local machine are `docker` and `make`.
 3. (tutorial) [Linear Regression with PyTorch](https://towardsdatascience.com/linear-regression-with-pytorch-eb6dedead817)
 4. (tutorial) [PyTorch basics](https://towardsdatascience.com/pytorch-basics-how-to-train-your-neural-net-intro-to-cnn-26a14c2ea29)
 5. (blog) [Abhishek Paudel: Pen Stroke Sequence Feature Extraction from MNIST Digits](https://abpaudel.com/blog/mnist-sequence-feature-extraction/)
+6. (repo) [https://github.com/anibali/docker-pytorch](https://github.com/anibali/docker-pytorch)
