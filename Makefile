@@ -18,6 +18,9 @@ RUN_FLAGS = \
 	--volume=/tmp/pytorchtutorial/output:/tmp/output \
 	${IMAGE_TAG}
 
+runmnist: image downloaddata
+	docker run ${RUN_FLAGS} python mnist.py
+
 shell: image downloaddata
 	docker run ${RUN_FLAGS} bash
 
