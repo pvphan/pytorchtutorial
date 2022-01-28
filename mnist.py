@@ -7,7 +7,7 @@ imageSize = (28, 28)
 inputSize = imageSize[0] * imageSize[1]
 outputSize = 10
 
-class MnistModel(torch.nn.Module):
+class MnistModelLinear(torch.nn.Module):
     def __init__(self):
         """
         n_out = ((n_in + 2p - k) / s) + 1
@@ -18,17 +18,20 @@ class MnistModel(torch.nn.Module):
         p       -- convolution padding size
         s       -- convolution stride size
         """
-        super(MnistModel, self).__init__()
-        hiddenLayerSize = 16
+        super(MnistModelLinear, self).__init__()
+        baseHiddenLayerSize = 16
 
-        self.hiddenLayer1 = torch.nn.Linear(inputSize, hiddenLayerSize)
-        self.hiddenLayer2 = torch.nn.Linear(hiddenLayerSize, outputSize)
+        self.hiddenLayer1 = torch.nn.Linear(inputSize, 2 * baseHiddenLayerSize)
+        self.hiddenLayer2 = torch.nn.Linear(2 * baseHiddenLayerSize, baseHiddenLayerSize)
+        self.hiddenLayer3 = torch.nn.Linear(baseHiddenLayerSize, outputSize)
         self.relu = torch.nn.ReLU()
 
         self.fullNetworkFunction = torch.nn.Sequential(
             self.hiddenLayer1,
             self.relu,
             self.hiddenLayer2,
+            self.relu,
+            self.hiddenLayer3,
         )
 
     def forward(self, x):
@@ -67,33 +70,24 @@ def trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpoch
     optimizer = torch.optim.SGD(model.parameters(), lr=learningRate)
 
     for epoch in range(numEpochs):
-        # Clear gradient buffers because we don't want any gradient from previous epoch to carry forward, dont want to cummulate gradients
         optimizer.zero_grad()
-
-        # get output from the model, given the inputs
         outputsTensor = model(inputTensorTrain)
 
-        # get loss for the predicted output
         loss = criterion(outputsTensor, labelTensorTrain)
         lossValue = loss.cpu().data.numpy()
         losses.append(lossValue)
 
-        # get gradients w.r.t to parameters
         loss.backward()
 
-        # update parameters
         optimizer.step()
-
         print(f'epoch {epoch}, loss {loss.item()}')
+    return losses
 
 
 def main():
-    model = MnistModel()
+    modelClass, numEpochs, learningRate = MnistModelLinear, 10_000, 0.1 # 94%
+    model = modelClass()
     device = initializeDevice(model)
-    learningRate = 0.1
-    #numEpochs, learningRate = 1_000, 0.1 # 84.12%
-    numEpochs, learningRate = 10_000, 0.1 # 91.97%
-    #numEpochs, learningRate = 100_000, 0.1 # 93.46%
 
     datasetDict = mnistdataset.loadDataset()
     x = datasetDict["train"]["images"]
@@ -111,8 +105,9 @@ def main():
         predictedArray = model(labelTensorTest).cpu().data.numpy()
         predictedLabels = np.argmax(predictedArray, axis=1)
         numCorrectlyPredicted = np.sum(predictedLabels == ytest)
-        print(f"correctly predicted {100 * numCorrectlyPredicted/predictedLabels.shape[0]:0.2f}%")
+        print(f"Correctly predicted {100 * numCorrectlyPredicted/predictedLabels.shape[0]:0.2f}%")
 
 
 if __name__ == "__main__":
     main()
+
