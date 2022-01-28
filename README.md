@@ -5,7 +5,7 @@
 
 This template provides a quick way to experiment with neural network architectures on the classic 'MNIST database of handwritten digits' using PyTorch. Library dependencies and dataset parsing are handled for you.
 
-Prerequisites on your local machine are `docker` and `make`.
+Prerequisites on your local machine are `docker`, `make`, `wget`, `gunzip`.
 
 
 ### Quick start:
