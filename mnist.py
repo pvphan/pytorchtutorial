@@ -62,6 +62,7 @@ def createLabelsArray(y, outputSize):
 
 
 def trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpochs):
+    losses = []
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=learningRate)
 
@@ -74,6 +75,8 @@ def trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpoch
 
         # get loss for the predicted output
         loss = criterion(outputsTensor, labelTensorTrain)
+        lossValue = loss.cpu().data.numpy()
+        losses.append(lossValue)
 
         # get gradients w.r.t to parameters
         loss.backward()
@@ -88,20 +91,22 @@ def main():
     model = MnistModel()
     device = initializeDevice(model)
     learningRate = 0.1
-    numEpochs = 1000
+    #numEpochs, learningRate = 1_000, 0.1 # 84.12%
+    numEpochs, learningRate = 10_000, 0.1 # 91.97%
+    #numEpochs, learningRate = 100_000, 0.1 # 93.46%
 
     datasetDict = mnistdataset.loadDataset()
     x = datasetDict["train"]["images"]
     y = datasetDict["train"]["labels"]
-    inputTensorTrain = createTensor(x, device, inputSize)
+    inputTensorTrain = createTensor(x / 255, device, inputSize)
     labelsArray = createLabelsArray(y, outputSize)
     labelTensorTrain = createTensor(labelsArray, device, outputSize)
 
-    trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpochs)
+    losses = trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpochs)
 
     xtest = datasetDict["test"]["images"]
     ytest = datasetDict["test"]["labels"]
-    labelTensorTest = createTensor(xtest, device, inputSize)
+    labelTensorTest = createTensor(xtest / 255, device, inputSize)
     with torch.no_grad(): # we don't need gradients in the testing phase
         predictedArray = model(labelTensorTest).cpu().data.numpy()
         predictedLabels = np.argmax(predictedArray, axis=1)
