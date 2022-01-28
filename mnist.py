@@ -2,6 +2,7 @@ import numpy as np
 import torch
 
 import mnistdataset
+import models
 
 imageSize = (28, 28)
 inputSize = imageSize[0] * imageSize[1]
@@ -66,7 +67,7 @@ def trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpoch
 
 
 def main():
-    modelClass, numEpochs, learningRate = MnistModel, 1_000, 0.1
+    modelClass, numEpochs, learningRate = models.MnistModelLinear, 10_000, 0.1
     model = modelClass()
     device = initializeDevice(model)
 
