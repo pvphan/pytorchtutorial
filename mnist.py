@@ -7,35 +7,16 @@ imageSize = (28, 28)
 inputSize = imageSize[0] * imageSize[1]
 outputSize = 10
 
-class MnistModelLinear(torch.nn.Module):
+
+class MnistModel(torch.nn.Module):
     def __init__(self):
-        """
-        n_out = ((n_in + 2p - k) / s) + 1
-
-        n_out   -- number of output features
-        n_in    -- number of input features
-        k       -- convolution kernel size
-        p       -- convolution padding size
-        s       -- convolution stride size
-        """
-        super(MnistModelLinear, self).__init__()
-        baseHiddenLayerSize = 16
-
-        self.hiddenLayer1 = torch.nn.Linear(inputSize, 2 * baseHiddenLayerSize)
-        self.hiddenLayer2 = torch.nn.Linear(2 * baseHiddenLayerSize, baseHiddenLayerSize)
-        self.hiddenLayer3 = torch.nn.Linear(baseHiddenLayerSize, outputSize)
-        self.relu = torch.nn.ReLU()
-
-        self.fullNetworkFunction = torch.nn.Sequential(
-            self.hiddenLayer1,
-            self.relu,
-            self.hiddenLayer2,
-            self.relu,
-            self.hiddenLayer3,
-        )
+        super(MnistModel, self).__init__()
+        # TODO: populate your implemenation here
+        raise NotImplementedError()
 
     def forward(self, x):
-        return self.fullNetworkFunction(x)
+        # TODO: populate your implemenation here
+        raise NotImplementedError()
 
 
 def initializeDevice(model):
@@ -47,11 +28,11 @@ def initializeDevice(model):
     return device
 
 
-def createTensor(array, device, inputSize):
-    return torch.tensor(array, device=device, dtype=torch.float32).view(-1, inputSize)
+def createTensor(array, device, numCols):
+    return torch.tensor(array, device=device, dtype=torch.float32).view(-1, numCols)
 
 
-def createLabelsArray(y, outputSize):
+def createLabelsArray(y, numCols):
     """
     input:
         y -- (N,) integer labels
@@ -59,7 +40,7 @@ def createLabelsArray(y, outputSize):
         labelArray -- (N, 10) consisting of zeros except where integer labels
                 assign a 1.0
     """
-    labelsArray = np.zeros((y.shape[0], outputSize))
+    labelsArray = np.zeros((y.shape[0], numCols))
     labelsArray[np.arange(y.shape[0]),y] = 1.0
     return labelsArray
 
@@ -85,7 +66,7 @@ def trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpoch
 
 
 def main():
-    modelClass, numEpochs, learningRate = MnistModelLinear, 10_000, 0.1 # 94%
+    modelClass, numEpochs, learningRate = MnistModel, 1_000, 0.1
     model = modelClass()
     device = initializeDevice(model)
 
@@ -101,7 +82,8 @@ def main():
     xtest = datasetDict["test"]["images"]
     ytest = datasetDict["test"]["labels"]
     labelTensorTest = createTensor(xtest / 255, device, inputSize)
-    with torch.no_grad(): # we don't need gradients in the testing phase
+
+    with torch.no_grad():
         predictedArray = model(labelTensorTest).cpu().data.numpy()
         predictedLabels = np.argmax(predictedArray, axis=1)
         numCorrectlyPredicted = np.sum(predictedLabels == ytest)
