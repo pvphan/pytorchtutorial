@@ -61,25 +61,11 @@ def createLabelsArray(y, outputSize):
     return labelsArray
 
 
-def main():
-    model = MnistModel()
-    device = initializeDevice(model)
-    learningRate = 0.1
-    epochs = 1000
-
+def trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpochs):
     criterion = torch.nn.MSELoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=learningRate)
 
-    datasetDict = mnistdataset.loadDataset()
-    x = datasetDict["train"]["images"]
-    y = datasetDict["train"]["labels"]
-    inputTensorTrain = createTensor(x, device, inputSize)
-    labelsArray = createLabelsArray(y, outputSize)
-    labelTensorTrain = createTensor(labelsArray, device, outputSize)
-
-    losses = []
-
-    for epoch in range(epochs):
+    for epoch in range(numEpochs):
         # Clear gradient buffers because we don't want any gradient from previous epoch to carry forward, dont want to cummulate gradients
         optimizer.zero_grad()
 
@@ -92,21 +78,35 @@ def main():
         # get gradients w.r.t to parameters
         loss.backward()
 
-        losses.append(loss.detach().cpu().numpy())
-
         # update parameters
         optimizer.step()
 
         print(f'epoch {epoch}, loss {loss.item()}')
 
 
+def main():
+    model = MnistModel()
+    device = initializeDevice(model)
+    learningRate = 0.1
+    numEpochs = 1000
+
+    datasetDict = mnistdataset.loadDataset()
+    x = datasetDict["train"]["images"]
+    y = datasetDict["train"]["labels"]
+    inputTensorTrain = createTensor(x, device, inputSize)
+    labelsArray = createLabelsArray(y, outputSize)
+    labelTensorTrain = createTensor(labelsArray, device, outputSize)
+
+    trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpochs)
+
+    xtest = datasetDict["test"]["images"]
+    ytest = datasetDict["test"]["labels"]
+    labelTensorTest = createTensor(xtest, device, inputSize)
     with torch.no_grad(): # we don't need gradients in the testing phase
-        xtest = datasetDict["test"]["images"]
-        ytest = datasetDict["test"]["labels"]
-        labelTensorTest = createTensor(xtest, device, inputSize)
         predictedArray = model(labelTensorTest).cpu().data.numpy()
         predictedLabels = np.argmax(predictedArray, axis=1)
-        print(predictedLabels)
+        numCorrectlyPredicted = np.sum(predictedLabels == ytest)
+        print(f"correctly predicted {100 * numCorrectlyPredicted/predictedLabels.shape[0]:0.2f}%")
 
 
 if __name__ == "__main__":
