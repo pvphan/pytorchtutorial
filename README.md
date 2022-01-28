@@ -5,15 +5,15 @@
 
 This template provides a quick way to experiment with neural network architectures on the classic 'MNIST database of handwritten digits' using PyTorch. Library dependencies and dataset parsing are handled for you.
 
-Prerequisites on your local machine are `docker` and `make`.
+Prerequisites on your local machine are `docker`, `make`, `wget`, `gunzip`.
 
 
 ### Quick start:
 
 1. Clone this repo and `cd` into it.
-2. Modify (only) the class `MnistModel` in `mnist.py`. You can use `pytorch.py` as an example.
-3. In console, run `make runmnist` to train and test the network
-4. Check your results at the end, it will print `Correctly predicted __%` to tell you how the network performed!
+2. In [`mnist.py`](./mnist.py), modify the class `MnistModel` and hyperparameters. You can use [`pytorch.py`](./pytorch.py) as an example.
+3. In console, run `make runmnist` to train and test the network. It will print `Correctly predicted __%` to tell you how the network performed.
+4. Repeat from step 2!
 
 
 ### References:
@@ -23,3 +23,4 @@ Prerequisites on your local machine are `docker` and `make`.
 3. (tutorial) [Linear Regression with PyTorch](https://towardsdatascience.com/linear-regression-with-pytorch-eb6dedead817)
 4. (tutorial) [PyTorch basics](https://towardsdatascience.com/pytorch-basics-how-to-train-your-neural-net-intro-to-cnn-26a14c2ea29)
 5. (blog) [Abhishek Paudel: Pen Stroke Sequence Feature Extraction from MNIST Digits](https://abpaudel.com/blog/mnist-sequence-feature-extraction/)
+6. (repo) [https://github.com/anibali/docker-pytorch](https://github.com/anibali/docker-pytorch)
