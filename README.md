@@ -3,7 +3,7 @@
 ![mnist_image](https://abpaudel.com/assets/img/posts/mnist.png)
 (Figure from Abhishek Paudel ([source](https://abpaudel.com/blog/mnist-sequence-feature-extraction/)))
 
-This template provides a quick way to experiment with neural network architectures on the classic [MNIST database of handwritten digits](http://yann.lecun.com/exdb/mnist/) using PyTorch. Library dependencies and dataset parsing are handled for you.
+This template provides a quick way to experiment with neural network architectures on the classic 'MNIST database of handwritten digits' using PyTorch. Library dependencies and dataset parsing are handled for you.
 
 Prerequisites on your local machine are `docker` and `make`.
 
