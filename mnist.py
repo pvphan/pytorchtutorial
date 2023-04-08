@@ -2,6 +2,7 @@ import numpy as np
 import torch
 
 import mnistdataset
+import models
 
 imageSize = (28, 28)
 inputSize = imageSize[0] * imageSize[1]
@@ -61,12 +62,13 @@ def trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpoch
         loss.backward()
 
         optimizer.step()
-        print(f'epoch {epoch}, loss {loss.item()}')
+        print(f"epoch {epoch:05d}, loss {loss.item():0.6f}", end="\r")
+    print()
     return losses
 
 
 def main():
-    modelClass, numEpochs, learningRate = MnistModel, 1_000, 0.1
+    modelClass, numEpochs, learningRate = models.MnistModelLinear, 10_000, 0.1
     model = modelClass()
     device = initializeDevice(model)
 
@@ -87,7 +89,7 @@ def main():
         predictedArray = model(labelTensorTest).cpu().data.numpy()
         predictedLabels = np.argmax(predictedArray, axis=1)
         numCorrectlyPredicted = np.sum(predictedLabels == ytest)
-        print(f"Correctly predicted {100 * numCorrectlyPredicted/predictedLabels.shape[0]:0.2f}%")
+        print(f"Error rate: {100 - 100 * numCorrectlyPredicted/predictedLabels.shape[0]:0.2f}%")
 
 
 if __name__ == "__main__":
