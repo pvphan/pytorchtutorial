@@ -9,6 +9,10 @@ inputSize = imageSize[0] * imageSize[1]
 outputSize = 10
 
 
+def tensorToNumpy(tensor) -> np.ndarray:
+    return tensor.cpu().data.numpy()
+
+
 def initializeDevice(model):
     shouldUseCuda = torch.cuda.is_available()
     device = torch.device("cuda" if shouldUseCuda else "cpu")

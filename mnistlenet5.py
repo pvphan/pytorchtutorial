@@ -1,6 +1,7 @@
 # https://towardsdatascience.com/implementing-yann-lecuns-lenet-5-in-pytorch-5e05a0911320
 from datetime import datetime
 
+import numpy as np
 import torch
 import torch.nn as nn
 
@@ -10,14 +11,9 @@ import models
 
 
 def training_loop(model, criterion, optimizer, train_loader, valid_loader, epochs, device, print_every=1):
-    # set objects for storing metrics
-    best_loss = 1e10
     train_losses = []
     valid_losses = []
-
-    # Train model
     for epoch in range(0, epochs):
-
         # training
         model, optimizer, train_loss = train(train_loader, model, criterion, optimizer, device)
         train_losses.append(train_loss)
@@ -42,7 +38,6 @@ def train(train_loader, model, criterion, optimizer, device):
     running_loss = 0
 
     for X, y_true in train_loader:
-
         optimizer.zero_grad()
 
         X = X.to(device)
@@ -62,10 +57,6 @@ def train(train_loader, model, criterion, optimizer, device):
 
 
 def validate(valid_loader, model, criterion, device):
-    '''
-    Function for the validation step of the training loop
-    '''
-
     model.eval()
     running_loss = 0
 
@@ -85,7 +76,7 @@ def validate(valid_loader, model, criterion, device):
 
 
 def main():
-    numEpochs = 100
+    numEpochs = 2
     learningRate = 0.001
     numClasses = 10
     model = models.LeNet5(numClasses)
@@ -101,6 +92,20 @@ def main():
     trainDataLoader, valDataLoader = mnistdataset.getDataLoaders(dataRoot, batchSize)
     model, optimizer, _ = training_loop(
             model, criterion, optimizer, trainDataLoader, valDataLoader, numEpochs, device)
+
+    model.eval()
+    allLabels = []
+    allPredictions = []
+    for X, labels in valDataLoader:
+        X = X.to(device)
+        allLabels.extend(mnist.tensorToNumpy(labels))
+        labels = labels.to(device)
+
+        _, y_probs = model(X)
+        predictions = mnist.tensorToNumpy(torch.argmax(y_probs, dim=1))
+        allPredictions.extend(predictions)
+    numCorrectlyPredicted = np.sum(np.array(allPredictions) == np.array(allLabels))
+    print(f"Error rate: {100 - 100 * numCorrectlyPredicted/len(allLabels):0.2f}%")
 
 
 if __name__ == "__main__":
