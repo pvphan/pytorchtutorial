@@ -1,11 +1,46 @@
 import os
 import re
 import struct
+from typing import Tuple
 
 import imageio
 import numpy as np
+import torchvision
+from torch.utils.data import DataLoader
 
 datasetPath = "/pytorchtutorial/data/"
+
+
+def getDataLoaders(dataRoot: str, batchSize: int) -> Tuple[DataLoader, DataLoader]:
+    transforms = torchvision.transforms.Compose(
+            [torchvision.transforms.Resize((32, 32)), torchvision.transforms.ToTensor()])
+
+    trainDataset = torchvision.datasets.MNIST(
+            root=dataRoot,
+            train=True,
+            transform=transforms,
+            download=True,
+    )
+
+    valDataset = torchvision.datasets.MNIST(
+            root=dataRoot,
+            train=False,
+            transform=transforms,
+    )
+
+    trainDataLoader = DataLoader(
+            dataset=trainDataset,
+            batch_size=batchSize,
+            shuffle=True,
+    )
+
+    valDataLoader = DataLoader(
+            dataset=valDataset,
+            batch_size=batchSize,
+            shuffle=False,
+    )
+
+    return trainDataLoader, valDataLoader
 
 
 def loadDataset():
@@ -65,5 +100,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    dataRoot = "/tmp/data"
+    batchSize = 32
+    _, _ = getDataLoaders(dataRoot, batchSize)
 

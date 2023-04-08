@@ -9,17 +9,6 @@ inputSize = imageSize[0] * imageSize[1]
 outputSize = 10
 
 
-class MnistModel(torch.nn.Module):
-    def __init__(self):
-        super(MnistModel, self).__init__()
-        # TODO: populate your implemenation here
-        raise NotImplementedError()
-
-    def forward(self, x):
-        # TODO: populate your implemenation here
-        raise NotImplementedError()
-
-
 def initializeDevice(model):
     shouldUseCuda = torch.cuda.is_available()
     device = torch.device("cuda" if shouldUseCuda else "cpu")
@@ -68,8 +57,9 @@ def trainModel(model, inputTensorTrain, labelTensorTrain, learningRate, numEpoch
 
 
 def main():
-    modelClass, numEpochs, learningRate = models.MnistModelLinear, 10_000, 0.1
-    model = modelClass()
+    numEpochs = 100
+    learningRate = 0.001
+    model = models.LeNet5()
     device = initializeDevice(model)
 
     datasetDict = mnistdataset.loadDataset()

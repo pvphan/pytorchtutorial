@@ -16,10 +16,14 @@ RUN_FLAGS = \
 	--user="$(id -u):$(id -g)" \
 	--volume=${REPO_PATH}:${WORKDIR_PATH}:ro \
 	--volume=/tmp/pytorchtutorial/output:/tmp/output \
+	--volume=/tmp/pytorchtutorial/data:/tmp/data \
 	${IMAGE_TAG}
 
 runmnist: image downloaddata
 	docker run ${RUN_FLAGS} python mnist.py
+
+runmnistlenet5: image downloaddata
+	docker run ${RUN_FLAGS} python mnistlenet5.py
 
 shell: image downloaddata
 	docker run ${RUN_FLAGS} bash
