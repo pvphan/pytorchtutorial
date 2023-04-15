@@ -5,6 +5,22 @@ import numpy as np
 import scratch
 
 
+class TestFullyConnectedNet(unittest.TestCase):
+    def testforward(self):
+        # Given:
+        layerSizes = [
+                5,
+                3,
+                3,
+        ]
+        network = scratch.FullyConnectedNet(layerSizes)
+
+        # When:
+        outputs = network.forward()
+
+        # Then:
+        self.assertEqual(outputs.shape, (layerSizes[-1],))
+
 class TestScratch(unittest.TestCase):
     def testrelu(self):
         # Given:
