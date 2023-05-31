@@ -51,6 +51,20 @@ class TestFullyConnectedNet(unittest.TestCase):
         self.assertEqual(len(outputs), len(weights[-1][-1]))
         self.assertAlmostEqual(outputs[0], 0.191)
 
+    def testbackprop(self):
+        # Given:
+        weights = self.weights
+        inputs = self.inputs
+        network = scratch.FullyConnectedNet(weights)
+        labels = [1.0]
+
+        # When:
+        outputs = network.forward(inputs)
+        network.backprop(outputs, labels)
+
+        outputs = network.forward(inputs)
+        print(outputs)
+
 
 class TestScratch(unittest.TestCase):
     def testrelu(self):
