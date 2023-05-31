@@ -1,24 +1,32 @@
-from typing import List
+import pprint
+from typing import List, Tuple
 
 import numpy as np
 
-import mnistdataset
-
 
 class FullyConnectedNet:
-    def __init__(self, layerSizes: List[int]):
-        self._layerSizes = layerSizes
-        self._weights = [np.random.uniform(
-                low=-1, high=+1, size=(self._layerSizes[i], self._layerSizes[i+1]))
-                         for i in range(len(self._layerSizes) - 1)]
+    def __init__(self, weights: List[List[List[np.float32]]]):
+        self._weights = weights
 
-    def forward(self):
-        inputs = np.ones(self._layerSizes[0], dtype=np.float32)
+    def __repr__(self) -> str:
+        reprString = pprint.pformat(self._weights)
+        return reprString
+
+    @classmethod
+    def fromRandomWeights(cls, layerSizes: List[int]):
+        weights = []
+        for i in range(len(layerSizes) - 1):
+            weightsLayer = []
+            for _ in range(layerSizes[i]):
+                nodeWeights = [np.random.uniform(low=-1, high=+1) for _ in range(layerSizes[i+1])]
+                weightsLayer.append(nodeWeights)
+            weights.append(weightsLayer)
+        return cls(weights)
+
+    def forward(self, inputs: List[np.float32]) -> List[np.float32]:
         outputs = inputs
-        for inputLayerIndex in range(1, len(self._layerSizes)):
-            outputs = forward(inputs, self._weights[inputLayerIndex-1])
-            inputs = outputs
-
+        for weightsLayer in self._weights:
+            outputs = forwardOp(outputs, weightsLayer)
         return outputs
 
 
@@ -27,13 +35,10 @@ def relu(x: np.ndarray):
     return x * (x > 0)
 
 
-def forward(inputs: np.ndarray, weights: np.ndarray) -> np.ndarray:
-    return inputs @ weights
-
-
-def main():
-    dataset = mnistdataset.loadDataset()
-
-
-if __name__ == "__main__":
-    main()
+def forwardOp(inputs: List[np.float32], weightsLayer: List[List[np.float32]]) -> List[np.float32]:
+    print("forward pass")
+    pprint.pprint(inputs)
+    pprint.pprint(weightsLayer)
+    output = (np.array(inputs) @ np.array(weightsLayer)).tolist()
+    pprint.pprint(output)
+    return output

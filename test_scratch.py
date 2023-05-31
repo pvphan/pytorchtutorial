@@ -13,13 +13,40 @@ class TestFullyConnectedNet(unittest.TestCase):
                 3,
                 3,
         ]
-        network = scratch.FullyConnectedNet(layerSizes)
+        network = scratch.FullyConnectedNet.fromRandomWeights(layerSizes)
+        inputs = [1.0 for _ in range(layerSizes[0])]
 
         # When:
-        outputs = network.forward()
+        outputs = network.forward(inputs)
 
         # Then:
-        self.assertEqual(outputs.shape, (layerSizes[-1],))
+        self.assertEqual(len(outputs), layerSizes[-1])
+
+    def testforwardFromWeights(self):
+        # From example: https://hmkcode.com/ai/backpropagation-step-by-step/
+        # Given:
+        layer1Weights = [
+            [0.11, 0.12],
+            [0.21, 0.08],
+        ]
+        layer2Weights = [
+            [0.14],
+            [0.15],
+        ]
+        weights = [
+                layer1Weights,
+                layer2Weights,
+        ]
+        network = scratch.FullyConnectedNet(weights)
+        inputs = [2.0, 3.0]
+
+        # When:
+        outputs = network.forward(inputs)
+
+        # Then:
+        self.assertEqual(len(outputs), len(weights[-1][-1]))
+        self.assertAlmostEqual(outputs[0], 0.191)
+
 
 class TestScratch(unittest.TestCase):
     def testrelu(self):
@@ -37,7 +64,7 @@ class TestScratch(unittest.TestCase):
             else:
                 self.assertAlmostEqual(g[i], x[i])
 
-    def testforward(self):
+    def testforwardOp(self):
         # Given:
         a1 = 1
         a2 = 1
@@ -47,10 +74,10 @@ class TestScratch(unittest.TestCase):
                 low=-1, high=+1, size=(len(inputLayer), outputLayerSize))
 
         # When:
-        output = scratch.forward(inputLayer, weights)
+        output = scratch.forwardOp(inputLayer, weights)
 
         # Then:
-        self.assertEqual(output.shape, (outputLayerSize,))
+        self.assertEqual(len(output), outputLayerSize)
 
 
 if __name__ == "__main__":
