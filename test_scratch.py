@@ -63,7 +63,6 @@ class TestFullyConnectedNet(unittest.TestCase):
         network.backprop(outputs, labels)
 
         outputs = network.forward(inputs)
-        print(outputs)
 
 
 class TestScratch(unittest.TestCase):
