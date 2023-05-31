@@ -5,7 +5,7 @@ import numpy as np
 
 
 class FullyConnectedNet:
-    def __init__(self, weights: List[List[List[np.float32]]]):
+    def __init__(self, weights: List[List[List[float]]]):
         self._weights = weights
 
     def __repr__(self) -> str:
@@ -23,7 +23,7 @@ class FullyConnectedNet:
             weights.append(weightsLayer)
         return cls(weights)
 
-    def forward(self, inputs: List[np.float32]) -> List[np.float32]:
+    def forward(self, inputs: List[float]) -> List[float]:
         outputs = inputs
         for weightsLayer in self._weights:
             outputs = forwardOp(outputs, weightsLayer)
@@ -35,10 +35,10 @@ def relu(x: np.ndarray):
     return x * (x > 0)
 
 
-def forwardOp(inputs: List[np.float32], weightsLayer: List[List[np.float32]]) -> List[np.float32]:
-    print("forward pass")
-    pprint.pprint(inputs)
-    pprint.pprint(weightsLayer)
+def forwardOp(inputs: List[float], weightsLayer: List[List[float]]) -> List[float]:
     output = (np.array(inputs) @ np.array(weightsLayer)).tolist()
-    pprint.pprint(output)
     return output
+
+
+def computeError(outputs: List[float], label: List[float]) -> float:
+    return (0.5 * (np.array(label) - np.array(outputs)) ** 2).tolist()
