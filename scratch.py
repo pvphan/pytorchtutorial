@@ -31,30 +31,19 @@ class FullyConnectedNet:
             self._nodeValues[i] = hiddenLayer
             hiddenLayer = forwardOp(hiddenLayer, weightsLayer)
         self._nodeValues[-1] = hiddenLayer
-        print(f"_nodeValues")
-        pprint.pprint(self._nodeValues)
         return hiddenLayer
 
     def backprop(self, prediction: List[float], labels: List[float]) -> None:
         Δ = np.array(prediction) - np.array(labels)
         λ = self._learningRate
-        prevLayer = 1.0
+        prevLayer = np.array(labels)
         for i in range(len(self._weights) - 1, -1, -1):
             initialWeightsLayer = np.array(self._weights[i])
-            print(f"initialWeightsLayer{i}")
-            pprint.pprint(initialWeightsLayer)
             hiddenLayer = self._nodeValues[i]
-            print(f"hiddenLayer{i}")
-            pprint.pprint(hiddenLayer)
-            updatedWeightsLayer = initialWeightsLayer - (λ * Δ * np.array(hiddenLayer) * prevLayer).T
+            targetShape = initialWeightsLayer.shape
+            updatedWeightsLayer = initialWeightsLayer - (λ * Δ * np.array(hiddenLayer) * prevLayer).reshape(targetShape)
             prevLayer = initialWeightsLayer
-            print(f"updatedWeightsLayer{i}")
-            pprint.pprint(updatedWeightsLayer)
             self._weights[i] = updatedWeightsLayer.tolist()
-            print()
-
-        print("weights")
-        pprint.pprint(self._weights)
 
 
 def relu(x: np.ndarray):

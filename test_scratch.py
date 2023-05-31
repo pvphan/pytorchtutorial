@@ -59,10 +59,10 @@ class TestFullyConnectedNet(unittest.TestCase):
         labels = [1.0]
 
         # When:
-        outputs = network.forward(inputs)
-        network.backprop(outputs, labels)
-
-        outputs = network.forward(inputs)
+        for i in range(100):
+            outputs = network.forward(inputs)
+            network.backprop(outputs, labels)
+            print(f"VINH {i}: {outputs[0]}")
 
 
 class TestScratch(unittest.TestCase):
