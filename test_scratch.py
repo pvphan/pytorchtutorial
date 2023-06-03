@@ -51,11 +51,21 @@ class TestFullyConnectedNet(unittest.TestCase):
         # Given:
         weights = self.weights
         inputs = self.inputs
-        network = scratch.FullyConnectedNet(weights)
-        labels = [1.0]
         numIters = 100
 
         # When:
+        labels = [1.0]
+        network = scratch.FullyConnectedNet(weights)
+        for _ in range(numIters):
+            outputs = network.forward(inputs)
+            network.backprop(outputs, labels)
+
+        # Then:
+        self.assertAlmostEqual(outputs[0], labels[0])
+
+        # When:
+        labels = [0.0]
+        network = scratch.FullyConnectedNet(weights)
         for _ in range(numIters):
             outputs = network.forward(inputs)
             network.backprop(outputs, labels)
