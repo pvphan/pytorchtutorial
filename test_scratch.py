@@ -24,11 +24,7 @@ class TestFullyConnectedNet(unittest.TestCase):
 
     def testforward(self):
         # Given:
-        layerSizes = [
-                5,
-                3,
-                3,
-        ]
+        layerSizes = [5, 3, 3]
         network = scratch.FullyConnectedNet.fromRandomWeights(layerSizes)
         inputs = [1.0 for _ in range(layerSizes[0])]
 
@@ -57,12 +53,15 @@ class TestFullyConnectedNet(unittest.TestCase):
         inputs = self.inputs
         network = scratch.FullyConnectedNet(weights)
         labels = [1.0]
+        numIters = 100
 
         # When:
-        for i in range(100):
+        for _ in range(numIters):
             outputs = network.forward(inputs)
             network.backprop(outputs, labels)
-            print(f"VINH {i}: {outputs[0]}")
+
+        # Then:
+        self.assertAlmostEqual(outputs[0], labels[0])
 
 
 class TestScratch(unittest.TestCase):
