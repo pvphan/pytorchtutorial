@@ -9,15 +9,8 @@ inputSize = imageSize[0] * imageSize[1]
 outputSize = 10
 
 
-class MnistModel(torch.nn.Module):
-    def __init__(self):
-        super(MnistModel, self).__init__()
-        # TODO: populate your implemenation here
-        raise NotImplementedError()
-
-    def forward(self, x):
-        # TODO: populate your implemenation here
-        raise NotImplementedError()
+def tensorToNumpy(tensor) -> np.ndarray:
+    return tensor.cpu().data.numpy()
 
 
 def initializeDevice(model):
